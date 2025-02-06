@@ -1,0 +1,55 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="SecurdenCLI" Language="1033" Version="1.0.0" Manufacturer="YourCompany" UpgradeCode="0d9ebea0-3a7a-4450-bda8-a014f4fcb3e3">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of SecurdenCLI is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Specify custom banner and dialog bitmaps -->
+    <!-- <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" /> -->
+    <!-- <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" /> -->
+
+    <!-- Specify the custom EULA file -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="SECURDEN" Name="Securden">
+          <Directory Id="INSTALLFOLDER" Name="Securden_CLI">
+            <Component Id="CreateInstallFolder" Guid="8ed6cc94-a9ff-4c37-ac0d-611822887f56" Win64="yes">
+              <CreateFolder />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="SecurdenCLIExe" Guid="17fc6220-5c95-4470-bbf7-13efe37b5169" Win64="yes">
+        <File Source="securden_cli.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="SetSecurdenPath" Guid="E8A96480-93FA-4F39-95CB-764E58D2F86A" Win64="yes">
+        <RegistryKey Root="HKLM" Key="Software\SecurdenCLI">
+          <RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]" KeyPath="yes" />
+        </RegistryKey>
+        <Environment Id="SetSecurdenCLIPath" Action="set" Name="SECURDEN_CLI_PATH" System="yes" Permanent="yes" Value="[INSTALLFOLDER]" />
+      </Component>
+      <Component Id="AddToPath" Guid="19640873-0fcb-470b-a66c-18ec262f2a81" Win64="yes">
+        <CreateFolder />
+        <Environment Id="UpdatePath" Action="set" Name="PATH" Part="last" System="yes" Permanent="yes" Value="[INSTALLFOLDER]" />
+      </Component>
+    </DirectoryRef>
+
+    <Feature Id="DefaultFeature" Level="1">
+      <ComponentRef Id="CreateInstallFolder" />
+      <ComponentRef Id="SecurdenCLIExe" />
+      <ComponentRef Id="SetSecurdenPath" />
+      <ComponentRef Id="AddToPath" />
+    </Feature>
+
+    <UI>
+      <UIRef Id="WixUI_InstallDir" /> <!-- This includes the default dialogs with your custom images -->
+    </UI>
+  </Product>
+</Wix>
