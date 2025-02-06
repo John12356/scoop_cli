@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "description": "Your CLI tool description",
+  "homepage": "https://github.com/John12356/scoop_cli",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/John12356/scoop_cli/releases/download/v1.0.0/my-tool-windows-amd64.zip",
+      "hash": "8C0964EA7CD888445B97AFEE4AA94BB56C08EE2977F27D4FC122D6358CE65F5A"
+    }
+  },
+  "bin": "my-tool.exe",
+  "checkver": {
+    "github": "https://github.com/John12356/scoop_cli"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/John12356/scoop_cli/releases/download/v$version/my-tool-windows-amd64.zip"
+      }
+    }
+  }
+}
