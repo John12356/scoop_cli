@@ -59,7 +59,7 @@ var apiCmd = &cobra.Command{
 			fmt.Println("Both URL and AuthToken are required. Provide them via flags or configure them using the config command.")
 			return
 		}
-		accountID, _ := cmd.Flags().GetString("account_id")
+		accountID, _ := cmd.Flags().GetString("account-id")
 
 		// Setting up the HTTP client
 		client, err := getHTTPClient(cfg)
