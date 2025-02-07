@@ -9,7 +9,7 @@ import (
 )
 
 var clearConfigCmd = &cobra.Command{
-	Use:   "clear_config",
+	Use:   "clear-config",
 	Short: "Clear the saved server configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		configPath, err := getConfigFilePath()

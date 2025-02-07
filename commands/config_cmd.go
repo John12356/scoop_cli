@@ -119,11 +119,11 @@ var configCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		url, _ := cmd.Flags().GetString("url")
 		authToken, _ := cmd.Flags().GetString("authtoken")
-		verifyCertStr, _ := cmd.Flags().GetString("verifyCert")
+		verifyCertStr, _ := cmd.Flags().GetString("verifycert")
 		
 		verifyCert, parseErr := strconv.ParseBool(verifyCertStr)
 		if parseErr != nil {
-			fmt.Println("Invalid value for verifyCert. Use 'true' or 'false'.")
+			fmt.Println("Invalid value for verifycert. Use 'true' or 'false'.")
 			return
 		}
 
@@ -146,7 +146,7 @@ var configCmd = &cobra.Command{
 func init() {
 	configCmd.Flags().String("url", "", "Server URL")
 	configCmd.Flags().String("authtoken", "", "Authentication token")
-	configCmd.Flags().String("verifyCert", "true", "Enable SSL certificate verification (optional)")
+	configCmd.Flags().String("verifycert", "true", "Enable SSL certificate verification (optional)")
 	configCmd.MarkFlagRequired("url")
 	configCmd.MarkFlagRequired("authtoken")
 	RootCmd.AddCommand(configCmd)

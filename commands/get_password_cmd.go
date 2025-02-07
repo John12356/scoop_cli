@@ -15,11 +15,11 @@ func init() {
 	// Disabling the help command for this command since it's causing conflicts & manual help flag is added
 	apiCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 	apiCmd.Flags().BoolP("help", "h", false, "Help for get_password")
-	apiCmd.Flags().StringP("account_id", "a", "", "Account ID for the API call")
+	apiCmd.Flags().StringP("account-id", "a", "", "Account ID for the API call")
 	apiCmd.Flags().String("url", "", "Server URL (if not configured)")
 	apiCmd.Flags().String("authtoken", "", "Authentication token (if not configured)")
-	apiCmd.Flags().String("verifyCert", "true", "Enable SSL certificate verification (if not configured)")
-	apiCmd.MarkFlagRequired("account_id")
+	apiCmd.Flags().String("verifycert", "true", "Enable SSL certificate verification (if not configured)")
+	apiCmd.MarkFlagRequired("account-id")
 	RootCmd.AddCommand(apiCmd)
 }
 
@@ -28,7 +28,7 @@ type PasswordResponse struct {
 }
 
 var apiCmd = &cobra.Command{
-	Use:   "get_password",
+	Use:   "get-password",
 	Short: "Retrieve the password from the Securden server",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Load existing configuration
@@ -44,12 +44,12 @@ var apiCmd = &cobra.Command{
 		if cmd.Flags().Changed("authtoken") {
 			cfg.AuthToken, _ = cmd.Flags().GetString("authtoken")
 		}
-		if cmd.Flags().Changed("verifyCert") {
+		if cmd.Flags().Changed("verifycert") {
 			// Taking verifyCert as string and converting explicitly it to a bool 
-			verifyCertStr, _ := cmd.Flags().GetString("verifyCert")
+			verifyCertStr, _ := cmd.Flags().GetString("verifycert")
 			verifyCert, parseErr := strconv.ParseBool(verifyCertStr)
 			if parseErr != nil {
-				fmt.Println("Invalid value for --verifyCert. Use 'true' or 'false'.")
+				fmt.Println("Invalid value for --verifycert. Use 'true' or 'false'.")
 				return
 			}
 			cfg.VerifyCert = verifyCert
