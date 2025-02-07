@@ -2,6 +2,13 @@
   "version": "1.2.0",
   "description": "Your CLI tool description",
   "homepage": "https://github.com/John12356/scoop_cli",
+  "env_set": {
+    "SECURDEN_CLI_PATH": "$dir"
+  },
+  "post_install": [
+    "Set-Location $dir"
+  ],
+
   "license": "MIT",
   "architecture": {
     "64bit": {
