@@ -35,15 +35,17 @@ var apiCmd = &cobra.Command{
 		cfg, err := loadConfig()
 		if err != nil {
 			cfg = Config{} // Initialize an empty config if the file doesn't exist
+			cfg.VerifyCert = true
 		}
 
 		// Overriding configured values with command-line flags if provided
 		if cmd.Flags().Changed("url") {
 			cfg.URL, _ = cmd.Flags().GetString("url")
 		}
-		if cmd.Flags().Changed("authtoken") {
-			cfg.AuthToken, _ = cmd.Flags().GetString("authtoken")
-		}
+		AuthToken, _ := cmd.Flags().GetString("authtoken")
+		// if cmd.Flags().Changed("authtoken") {
+		// 	cfg.AuthToken, _ = cmd.Flags().GetString("authtoken")
+		// }
 		if cmd.Flags().Changed("verifycert") {
 			// Taking verifyCert as string and converting explicitly it to a bool 
 			verifyCertStr, _ := cmd.Flags().GetString("verifycert")
@@ -55,8 +57,12 @@ var apiCmd = &cobra.Command{
 			cfg.VerifyCert = verifyCert
 		}
 
-		if cfg.URL == "" || cfg.AuthToken == "" {
-			fmt.Println("Both URL and AuthToken are required. Provide them via flags or configure them using the config command.")
+		if cfg.URL == "" || AuthToken == "" {
+			if cfg.URL == "" {
+				fmt.Println("URL field required. Provide it via flags or configure it using the config command.")
+				return
+			}
+			fmt.Println("Please provide the authentication token via flags at least one time for a session.")
 			return
 		}
 		accountID, _ := cmd.Flags().GetString("account-id")
@@ -84,7 +90,7 @@ var apiCmd = &cobra.Command{
 			fmt.Println("Error creating request:", err)
 			return
 		}
-		req.Header.Add("authtoken", cfg.AuthToken)
+		req.Header.Add("authtoken", AuthToken)
 		response, err := client.Do(req)
 		if err != nil {
 			fmt.Println("Error calling API:", err)

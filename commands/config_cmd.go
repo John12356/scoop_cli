@@ -17,7 +17,7 @@ import (
 
 type Config struct {
 	URL        string `json:"url"`
-	AuthToken  string `json:"authtoken"`
+	// AuthToken  string `json:"authtoken"`
 	VerifyCert bool   `json:"verifyCert"`
 }
 
@@ -40,6 +40,7 @@ func saveConfig(config Config) error {
     encoder := json.NewEncoder(file)
     return encoder.Encode(config)
 }
+
 func getConfigFilePath() (string, error) {
     configDir, err := os.UserConfigDir()
     if err != nil {
@@ -118,7 +119,7 @@ var configCmd = &cobra.Command{
 	Short: "Configure server details",
 	Run: func(cmd *cobra.Command, args []string) {
 		url, _ := cmd.Flags().GetString("url")
-		authToken, _ := cmd.Flags().GetString("authtoken")
+		// authToken, _ := cmd.Flags().GetString("authtoken")
 		verifyCertStr, _ := cmd.Flags().GetString("verifycert")
 		
 		verifyCert, parseErr := strconv.ParseBool(verifyCertStr)
@@ -127,12 +128,12 @@ var configCmd = &cobra.Command{
 			return
 		}
 
-		if url == "" || authToken == "" {
-			fmt.Println("Both --url and --authtoken are required.")
+		if url == "" {
+			fmt.Println("--url field required.")
 			return
 		}
 
-		config := Config{URL: url, AuthToken: authToken, VerifyCert: verifyCert}
+		config := Config{URL: url, VerifyCert: verifyCert}
 
 		err := saveConfig(config)
 		if err != nil {
@@ -145,9 +146,9 @@ var configCmd = &cobra.Command{
 
 func init() {
 	configCmd.Flags().String("url", "", "Server URL")
-	configCmd.Flags().String("authtoken", "", "Authentication token")
+	// configCmd.Flags().String("authtoken", "", "Authentication token")
 	configCmd.Flags().String("verifycert", "true", "Enable SSL certificate verification (optional)")
 	configCmd.MarkFlagRequired("url")
-	configCmd.MarkFlagRequired("authtoken")
+	// configCmd.MarkFlagRequired("authtoken")
 	RootCmd.AddCommand(configCmd)
 }
