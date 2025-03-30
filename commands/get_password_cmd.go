@@ -12,42 +12,58 @@ import (
 )
 
 func init() {
-	// Disabling the help command for this command since it's causing conflicts & manual help flag is added
 	apiCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 	apiCmd.Flags().BoolP("help", "h", false, "Help for get_password")
-	apiCmd.Flags().StringP("account-id", "a", "", "Account ID for the API call")
+	apiCmd.Flags().StringP("account-id", "i", "", "Account ID for the API call")
+	apiCmd.Flags().StringP("account-name", "n", "", "Account Name for the API call")
+	apiCmd.Flags().StringP("account-type", "t", "", "Account Type for the API call")
+	apiCmd.Flags().StringP("account-title", "l", "", "Account Title for the API call")
 	apiCmd.Flags().String("url", "", "Server URL (if not configured)")
 	apiCmd.Flags().String("authtoken", "", "Authentication token (if not configured)")
 	apiCmd.Flags().String("verifycert", "true", "Enable SSL certificate verification (if not configured)")
-	apiCmd.MarkFlagRequired("account-id")
 	RootCmd.AddCommand(apiCmd)
 }
 
 type PasswordResponse struct {
 	Password string `json:"password"`
+	Message  string `json:"message"`
 }
 
 var apiCmd = &cobra.Command{
 	Use:   "get-password",
 	Short: "Retrieve the password from the Securden server",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Load existing configuration
+		// Defer flag clearing to ensure it happens after execution
+		defer func() {
+			cmd.Flags().Set("account-id", "")
+			cmd.Flags().Set("account-name", "")
+			cmd.Flags().Set("account-type", "")
+			cmd.Flags().Set("account-title", "")
+		}()
+
+		// Load existing configuration. If conf has no url, you should pass it out on commands
 		cfg, err := loadConfig()
 		if err != nil {
-			cfg = Config{} // Initialize an empty config if the file doesn't exist
+			cfg = Config{}
 			cfg.VerifyCert = true
 		}
 
-		// Overriding configured values with command-line flags if provided
+		// Get fresh flag values
+		accountID, _ := cmd.Flags().GetString("account-id")
+		accountName, _ := cmd.Flags().GetString("account-name")
+		accountType, _ := cmd.Flags().GetString("account-type")
+		accountTitle, _ := cmd.Flags().GetString("account-title")
+
+		if accountID == "" && accountName == "" && accountTitle == "" {
+			fmt.Println("Error: At least one of --account-id, --account-name or --account-title must be provided")
+			return
+		}
+
 		if cmd.Flags().Changed("url") {
 			cfg.URL, _ = cmd.Flags().GetString("url")
 		}
 		AuthToken, _ := cmd.Flags().GetString("authtoken")
-		// if cmd.Flags().Changed("authtoken") {
-		// 	cfg.AuthToken, _ = cmd.Flags().GetString("authtoken")
-		// }
 		if cmd.Flags().Changed("verifycert") {
-			// Taking verifyCert as string and converting explicitly it to a bool 
 			verifyCertStr, _ := cmd.Flags().GetString("verifycert")
 			verifyCert, parseErr := strconv.ParseBool(verifyCertStr)
 			if parseErr != nil {
@@ -65,26 +81,34 @@ var apiCmd = &cobra.Command{
 			fmt.Println("Please provide the authentication token via flags at least one time for a session.")
 			return
 		}
-		accountID, _ := cmd.Flags().GetString("account-id")
 
-		// Setting up the HTTP client
 		client, err := getHTTPClient(cfg)
 		if err != nil {
 			fmt.Println("Error setting up HTTP client:", err)
 			return
 		}
 
-		u, err := url.Parse(cfg.URL + "/api/get_password")
+		u, err := url.Parse(cfg.URL + "/secretsmanagement/get_password_via_tools")
 		if err != nil {
 			fmt.Println("Error parsing URL:", err)
 			return
 		}
 
 		query := u.Query()
-		query.Set("account_id", accountID)
+		if accountID != "" {
+			query.Set("account_id", accountID)
+		}
+		if accountName != "" {
+			query.Set("account_name", accountName)
+		}
+		if accountType != "" {
+			query.Set("account_type", accountType)
+		}
+		if accountTitle != "" {
+			query.Set("account_title", accountTitle)
+		}
 		u.RawQuery = query.Encode()
 
-		// Create the HTTP request
 		req, err := http.NewRequest("GET", u.String(), nil)
 		if err != nil {
 			fmt.Println("Error creating request:", err)
@@ -102,6 +126,23 @@ var apiCmd = &cobra.Command{
 			fmt.Println("Error reading response:", err)
 			return
 		}
+
+		if response.StatusCode == http.StatusForbidden {
+			var errorResp PasswordResponse
+			err = json.Unmarshal(body, &errorResp)
+			if err != nil {
+				fmt.Println("Error parsing error response:", err)
+				return
+			}
+			fmt.Println("Error:", errorResp.Message)
+			return
+		}
+
+		if response.StatusCode != http.StatusOK {
+			fmt.Printf("Error: Received status code %d from server\n", response.StatusCode)
+			return
+		}
+
 		var passwordResp PasswordResponse
 		err = json.Unmarshal(body, &passwordResp)
 		if err != nil {

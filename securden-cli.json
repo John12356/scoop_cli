@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.0.0",
   "description": "Your CLI tool description",
   "homepage": "https://github.com/John12356/scoop_cli",
   "env_set": {
@@ -8,8 +8,8 @@
   "license": "MIT",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/John12356/scoop_cli/releases/download/v1.5.0/securden-cli-windows-amd64.zip",
-      "hash": "7C502A1A5911A7F47E98776DF4744AE9C3F9D3318B2695D085BE0BAB5D17E3FF"
+      "url": "https://github.com/John12356/scoop_cli/releases/download/v1.0.0/securden-cli-windows-amd64.zip",
+      "hash": "CB3776D0CC03DE9AB5AF21DB33C342015F564BB573F134B40CC0E2BEC13EC318"
     }
   },
   "bin": "securden-cli.exe",
