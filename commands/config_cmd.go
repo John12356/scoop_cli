@@ -93,7 +93,8 @@ func getHTTPClient(config Config) (*http.Client, error) {
 		return &http.Client{Transport: transport}, nil
 	}
 
-	// Fetch SSL certificate from the server and use it for verification
+	// Fetch SSL certificate from the server and use it for verification. 
+	// If any problems arise during this process in the future, we can add the certificate manually
 	conn, err := tls.Dial("tcp", host, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch certificate from server: %v", err)
@@ -116,7 +117,7 @@ func getHTTPClient(config Config) (*http.Client, error) {
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Configure server details",
+	Short: "To save connectivity details",
 	Run: func(cmd *cobra.Command, args []string) {
 		url, _ := cmd.Flags().GetString("url")
 		// authToken, _ := cmd.Flags().GetString("authtoken")
@@ -124,12 +125,12 @@ var configCmd = &cobra.Command{
 		
 		verifyCert, parseErr := strconv.ParseBool(verifyCertStr)
 		if parseErr != nil {
-			fmt.Println("Invalid value for verifycert. Use 'true' or 'false'.")
+			fmt.Println("Invalid value for verifycert. The value must be either 'true' or 'false'.")
 			return
 		}
 
 		if url == "" {
-			fmt.Println("--url field required.")
+			fmt.Println("--url field is required.")
 			return
 		}
 
@@ -140,7 +141,7 @@ var configCmd = &cobra.Command{
 			fmt.Printf("error saving configuration: %v\n", err)
 			return
 		}
-		fmt.Println("Securden server configured with the CLI successfully.")
+		fmt.Println("Securden server connectivity details saved successfully.")
 	},
 }
 

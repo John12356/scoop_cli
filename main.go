@@ -7,6 +7,7 @@ import (
 	"securden_cli/commands"
 )
 
+// This is needed for to create .msi
 // func init() {
 // 	installPath, exists := os.LookupEnv("SECURDEN_CLI_PATH")
 // 	if !exists {

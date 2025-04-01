@@ -21,20 +21,20 @@ var clearConfigCmd = &cobra.Command{
 		err = os.Remove(configPath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				fmt.Println("No configuration found to clear.")
+				fmt.Println("Connectivity details not found.")
 			} else {
-				fmt.Printf("Error clearing configuration: %v\n", err)
+				fmt.Printf("Error deleting connectivity details: %v\n", err)
 			}
 			return
 		}
 		
-		// Optional: Remove the directory if empty
+		// Removing the directory if empty
 		configDir := filepath.Dir(configPath)
 		if err := os.Remove(configDir); err != nil && !os.IsNotExist(err) {
 			fmt.Printf("Note: Could not remove config directory: %v\n", err)
 		}
 
-		fmt.Println("Configuration cleared successfully.")
+		fmt.Println("Connectivity details deleted successfully.")
 	},
 }
 
