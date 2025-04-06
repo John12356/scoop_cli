@@ -9,7 +9,7 @@
   "architecture": {
     "64bit": {
       "url": "https://github.com/John12356/scoop_cli/releases/download/v1.0.0/securden-cli-windows-amd64.zip",
-      "hash": "965B197D61089987FFA321D934772291DA8E4985F70466792231D5B509B32A82"
+      "hash": "593D84C619C3EA45EFCEFCDE21E5A6AA5CCAAA252A51C0440FE83B2942B9C3E3"
     }
   },
   "bin": "securden-cli.exe",
