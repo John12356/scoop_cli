@@ -1,395 +1,216 @@
-// package commands
-
-// import (
-// 	"bufio"
-// 	"fmt"
-// 	"os"
-// 	"strings"
-
-// 	"github.com/spf13/cobra"
-// 	"github.com/spf13/pflag"
-// )
-
-// var RootCmd = &cobra.Command{
-// 	Use:   "securden-cli",
-// 	Short: "Securden CLI for API interactions",
-// 	Long:  "A command-line interface to interact with Securden APIs.",
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		fmt.Println("Welcome to Securden CLI. Type 'help' to see available commands or 'exit' to quit.")
-// 		securdenTemplate(cmd)
-// 	},
-// }
-
-// func securdenTemplate(cmd *cobra.Command) {
-// 	reader := bufio.NewReader(os.Stdin)
-// 	for {
-// 		fmt.Print(">>> ")
-// 		input, _ := reader.ReadString('\n')
-// 		input = strings.TrimSpace(input)
-
-// 		// Exit the REPL
-// 		if input == "exit" || input == "quit" {
-// 			fmt.Println("Exiting Securden CLI.")
-// 			break
-// 		}
-
-// 		// Execute the command
-// 		if input != "" {
-// 			args := strings.Split(input, " ")
-
-// 			// Check if the -h flag is present
-// 			if containsHelpFlag(args) {
-// 				cmd.SetArgs(args)
-// 				cmd.Help()
-// 				continue // Skip further processing
-// 			}
-
-// 			// Create a fresh command instance for each execution
-// 			newCmd := *cmd // Copy the root command
-// 			newCmd.SetArgs(args)
-
-// 			// Reset flags and command state
-// 			newCmd.Flags().VisitAll(func(f *pflag.Flag) {
-// 				f.Changed = false // Reset "changed" state
-// 				if err := f.Value.Set(f.DefValue); err != nil {
-// 					fmt.Printf("Error resetting flag %s: %v\n", f.Name, err)
-// 				}
-// 			})
-
-// 			// Execute the command
-// 			if err := newCmd.Execute(); err != nil {
-// 				fmt.Printf("Error: %s\n", err)
-// 			}
-// 		}
-// 	}
-// }
-
-// // Helper function to check if the -h flag is present
-// func containsHelpFlag(args []string) bool {
-// 	for _, arg := range args {
-// 		if arg == "-h" || arg == "--help" {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
-// package commands
-
-// import (
-// 	"fmt"
-// 	"os"
-// 	"strings"
-
-// 	"github.com/c-bata/go-prompt"
-// 	"github.com/spf13/cobra"
-// 	"github.com/spf13/pflag"
-// )
-
-// var RootCmd = &cobra.Command{
-// 	Use:   "securden-cli",
-// 	Short: "Securden CLI for API interactions",
-// 	Long:  "A command-line interface to interact with Securden APIs.",
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		fmt.Println("Welcome to Securden CLI. Type 'help' to see available commands or 'exit' to quit.")
-// 		startREPL(cmd)
-// 	},
-// }
-
-// func startREPL(cmd *cobra.Command) {
-// 	// Define the executor function for go-prompt
-// 	executor := func(input string) {
-// 		input = strings.TrimSpace(input)
-
-// 		// Exit the REPL
-// 		if input == "exit" || input == "quit" {
-// 			fmt.Println("Exiting Securden CLI.")
-// 			os.Exit(0)
-// 		}
-
-// 		// Execute the command
-// 		if input != "" {
-// 			args := strings.Split(input, " ")
-
-// 			// Check if the -h flag is present
-// 			if containsHelpFlag(args) {
-// 				cmd.SetArgs(args)
-// 				cmd.Help()
-// 				return
-// 			}
-
-// 			// Create a fresh command instance for each execution
-// 			newCmd := *cmd // Copy the root command
-// 			newCmd.SetArgs(args)
-
-// 			// Reset flags and command state
-// 			newCmd.Flags().VisitAll(func(f *pflag.Flag) {
-// 				f.Changed = false // Reset "changed" state
-// 				if err := f.Value.Set(f.DefValue); err != nil {
-// 					fmt.Printf("Error resetting flag %s: %v\n", f.Name, err)
-// 				}
-// 			})
-
-// 			// Execute the command
-// 			if err := newCmd.Execute(); err != nil {
-// 				fmt.Printf("Error: %s\n", err)
-// 			}
-// 		}
-// 	}
-
-// 	// Define the completer function for go-prompt (optional)
-// 	completer := func(d prompt.Document) []prompt.Suggest {
-// 		return []prompt.Suggest{} // Add autocomplete suggestions here
-// 	}
-
-// 	// Start the REPL with go-prompt
-// 	p := prompt.New(
-// 		executor,
-// 		completer,
-// 		prompt.OptionPrefix(">>> "),
-// 		prompt.OptionTitle("securden-cli"),
-// 	)
-// 	p.Run()
-// }
-
-// // Helper function to check if the -h flag is present
-// func containsHelpFlag(args []string) bool {
-// 	for _, arg := range args {
-// 		if arg == "-h" || arg == "--help" {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
-// package commands
-
-// import (
-// 	"fmt"
-// 	"os"
-// 	"os/signal"
-// 	"strings"
-// 	"syscall"
-
-// 	"github.com/c-bata/go-prompt"
-// 	"github.com/spf13/cobra"
-// 	"github.com/spf13/pflag"
-// 	"golang.org/x/term"
-// )
-
-// var RootCmd = &cobra.Command{
-// 	Use:   "securden-cli",
-// 	Short: "Securden CLI for API interactions",
-// 	Long:  "A command-line interface to interact with Securden APIs.",
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		fmt.Println("Welcome to Securden CLI. Type 'help' to see available commands or 'exit' to quit.")
-// 		startREPL(cmd)
-// 	},
-// }
-
-// func startREPL(cmd *cobra.Command) {
-// 	// Save original terminal state
-// 	originalState, err := term.GetState(int(os.Stdin.Fd()))
-// 	if err != nil {
-// 		fmt.Printf("Warning: Couldn't save terminal state: %v\n", err)
-// 	}
-
-// 	// Setup signal handling for proper cleanup
-// 	sigChan := make(chan os.Signal, 1)
-// 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-// 	// Channel to signal when we want to exit
-// 	exitChan := make(chan struct{})
-
-// 	// Define the executor function
-// 	executor := func(input string) {
-// 		input = strings.TrimSpace(input)
-
-// 		if input == "exit" || input == "quit" {
-// 			fmt.Println("Exiting Securden CLI.")
-// 			close(exitChan)
-// 			return
-// 		}
-
-// 		if input != "" {
-// 			args := strings.Split(input, " ")
-
-// 			if containsHelpFlag(args) {
-// 				cmd.SetArgs(args)
-// 				cmd.Help()
-// 				return
-// 			}
-
-// 			newCmd := *cmd
-// 			newCmd.SetArgs(args)
-
-// 			newCmd.Flags().VisitAll(func(f *pflag.Flag) {
-// 				f.Changed = false
-// 				if err := f.Value.Set(f.DefValue); err != nil {
-// 					fmt.Printf("Error resetting flag %s: %v\n", f.Name, err)
-// 				}
-// 			})
-
-// 			if err := newCmd.Execute(); err != nil {
-// 				fmt.Printf("Error: %s\n", err)
-// 			}
-// 		}
-// 	}
-
-// 	// Start the prompt in a goroutine
-// 	go func() {
-// 		p := prompt.New(
-// 			executor,
-// 			func(d prompt.Document) []prompt.Suggest { return nil },
-// 			prompt.OptionPrefix(">>> "),
-// 			prompt.OptionTitle("securden-cli"),
-// 			prompt.OptionAddKeyBind(prompt.KeyBind{
-// 				Key: prompt.ControlC,
-// 				Fn: func(*prompt.Buffer) {
-// 					close(exitChan)
-// 				},
-// 			}),
-// 		)
-// 		p.Run()
-// 	}()
-
-// 	// Wait for exit signal
-// 	select {
-// 	case <-exitChan:
-// 	case <-sigChan:
-// 		fmt.Println("\nExiting Securden CLI.")
-// 	}
-
-// 	// Restore terminal state
-// 	if originalState != nil {
-// 		if err := term.Restore(int(os.Stdin.Fd()), originalState); err != nil {
-// 			fmt.Printf("Warning: Couldn't restore terminal state: %v\n", err)
-// 		}
-// 	}
-// }
-
-// func containsHelpFlag(args []string) bool {
-// 	for _, arg := range args {
-// 		if arg == "-h" || arg == "--help" {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
 package commands
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 	"strings"
 	"syscall"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"golang.org/x/term"
+)
+
+const (
+	Version = "1.0.0"
+)
+type SessionConfig struct {
+	URL           string
+	VerifyCert    bool
+	URLSet        bool
+	VerifyCertSet bool
+}
+
+var (
+	sessionAuthToken string
+	sessionConfig    = &SessionConfig{}
 )
 
 var RootCmd = &cobra.Command{
 	Use:   "securden-cli",
-	Short: "CLI for Securden APIs",
+	Short: "A Command-Line-Interface for Securden APIs",
 	Long:  "A command-line interface to interact with Securden APIs.",
+	Version: Version,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Welcome to Securden CLI. Type '--help' to see the list of available commands or 'exit' to quit.")
-		startREPL(cmd)
+		startREPL()
 	},
 }
 
-func startREPL(cmd *cobra.Command) {
-	// Save original terminal state
+func init() {
+	RootCmd.AddCommand(createGetPasswordCmd())
+	RootCmd.AddCommand(createConfigCmd())
+	RootCmd.AddCommand(createClearCmd())
+	RootCmd.AddCommand(createClearConfigCmd())
+	templateFunc := func() string {
+		return fmt.Sprintf("Securden CLI version %s\nGo version: %s\nOS/Arch: %s/%s\n",
+			Version,
+			runtime.Version(),
+			runtime.GOOS,
+			runtime.GOARCH)
+	}
+	RootCmd.SetVersionTemplate(templateFunc()) //version template as a flag
+}
+
+func startREPL() {
+	// Save and restore terminal state
 	originalState, err := term.GetState(int(os.Stdin.Fd()))
 	if err != nil {
 		fmt.Printf("Warning: Couldn't save terminal state: %v\n", err)
 	}
+	defer func() {
+		if originalState != nil {
+			term.Restore(int(os.Stdin.Fd()), originalState)
+		}
+	}()
 
-	// Setup signal handling for proper cleanup
+	cleanup := func() {
+		sessionAuthToken = "" // Clear the session token
+		sessionConfig = &SessionConfig{}
+	}
+
+	// Handle interrupts
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	// Channel to signal when we want to exit
+	fmt.Println("Welcome to Securden CLI (1.0.0). Type '--help' for available commands or 'exit' to quit.")
+
+	if runtime.GOOS == "windows" {
+		startWindowsREPL(cleanup, sigChan)
+	} else {
+		startUnixREPL(cleanup, sigChan)
+	}
+}
+
+func startWindowsREPL(cleanup func(), sigChan chan os.Signal) {
+	reader := bufio.NewReader(os.Stdin)
 	exitChan := make(chan struct{})
 
-	// Define the executor function with proper argument parsing
+	go func() {
+		<-sigChan
+		fmt.Println("\nExiting Securden CLI.")
+		cleanup()
+		close(exitChan)
+	}()
+
+	for {
+		select {
+		case <-exitChan:
+			return
+		default:
+			fmt.Print(">>> ")
+			line, err := reader.ReadString('\n')
+			if err != nil {
+				fmt.Println("\nExiting Securden CLI.")
+				return
+			}
+
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+
+			if line == "exit" || line == "quit" {
+				fmt.Println("Exiting Securden CLI.")
+				cleanup()
+				return
+			}
+
+			args, err := parseCommandLine(line)
+			if err != nil {
+				fmt.Printf("Error parsing command: %v\n", err)
+				continue
+			}
+
+			cmd := createRootCmd()
+			cmd.SetArgs(args)
+
+			if err := cmd.Execute(); err != nil {
+				fmt.Printf("Error: %v\n", err)
+			}
+		}
+	}
+}
+
+func startUnixREPL(cleanup func(), sigChan chan os.Signal) {
+	exitChan := make(chan struct{})
+
 	executor := func(input string) {
 		input = strings.TrimSpace(input)
 		if input == "exit" || input == "quit" {
 			fmt.Println("Exiting Securden CLI.")
+			cleanup()
 			close(exitChan)
 			return
 		}
 
 		if input != "" {
-			// Parse the input with proper quote handling
 			args, err := parseCommandLine(input)
 			if err != nil {
 				fmt.Printf("Error parsing command: %v\n", err)
 				return
 			}
 
-			if containsHelpFlag(args) {
-				cmd.SetArgs(args)
-				cmd.Help()
-				return
-			}
+			cmd := createRootCmd()
+			cmd.SetArgs(args)
 
-			// Create a new command instance to avoid flag pollution
-			newCmd := *cmd
-			newCmd.SetArgs(args)
-
-			// Reset all flags to their default values
-			newCmd.Flags().VisitAll(func(f *pflag.Flag) {
-				f.Changed = false
-				if err := f.Value.Set(f.DefValue); err != nil {
-					fmt.Printf("Error resetting flag %s: %v\n", f.Name, err)
-				}
-			})
-
-			if err := newCmd.Execute(); err != nil {
+			if err := cmd.Execute(); err != nil {
 				fmt.Printf("Error: %v\n", err)
 			}
 		}
 	}
 
-	// Start the prompt in a goroutine
 	go func() {
 		p := prompt.New(
 			executor,
-			func(d prompt.Document) []prompt.Suggest { return nil },
+			func(d prompt.Document) []prompt.Suggest { return nil }, // We can add suggestion logic here if needed in future
 			prompt.OptionPrefix(">>> "),
-			prompt.OptionTitle("securden-cli"),
 			prompt.OptionAddKeyBind(prompt.KeyBind{
 				Key: prompt.ControlC,
 				Fn: func(*prompt.Buffer) {
+					fmt.Println("\nExiting Securden CLI.")
+					cleanup()
 					close(exitChan)
 				},
 			}),
+			prompt.OptionInputTextColor(prompt.Yellow),
+            prompt.OptionPrefixTextColor(prompt.Blue),
 		)
 		p.Run()
 	}()
 
-	// Wait for exit signal
 	select {
-	case <-exitChan:
-	case <-sigChan:
-		fmt.Println("\nExiting Securden CLI.")
-	}
-
-	// Restore terminal state
-	if originalState != nil {
-		if err := term.Restore(int(os.Stdin.Fd()), originalState); err != nil {
-			fmt.Printf("Warning: Couldn't restore terminal state: %v\n", err)
-		}
+		case <-exitChan:
+		case <-sigChan:
+			fmt.Println("\nExiting Securden CLI.")
+			cleanup()
 	}
 }
 
-// parseCommandLine properly splits a command string into arguments, handling quotes
+func createRootCmd() *cobra.Command {
+	rootCmd := &cobra.Command{
+		Use:   "securden-cli",
+		Short: "A Command-Line-Interface for Securden APIs",
+	}
+	rootCmd.AddCommand(createGetPasswordCmd())
+	rootCmd.AddCommand(createConfigCmd())
+	rootCmd.AddCommand(createClearCmd())
+	rootCmd.AddCommand(createClearConfigCmd())
+	templateFunc := func() string {
+		return fmt.Sprintf("Securden CLI version %s\nGo version: %s\nOS/Arch: %s/%s\n",
+			Version,
+			runtime.Version(),
+			runtime.GOOS,
+			runtime.GOARCH)
+	}
+	rootCmd.SetVersionTemplate(templateFunc())
+	return rootCmd
+}
+
+// for input values that has spaces or special characters and wrapped in quotes
+// or escaped with backslash, this function will parse the command line input
 func parseCommandLine(input string) ([]string, error) {
 	var args []string
 	var currentArg strings.Builder
@@ -440,13 +261,4 @@ func parseCommandLine(input string) ([]string, error) {
 	}
 
 	return args, nil
-}
-
-func containsHelpFlag(args []string) bool {
-	for _, arg := range args {
-		if arg == "-h" || arg == "--help" {
-			return true
-		}
-	}
-	return false
 }

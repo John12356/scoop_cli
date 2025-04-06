@@ -9,15 +9,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var clearCmd = &cobra.Command{
-	Use:   "clear",
-	Short: "Clears the terminal screen",
-	Run: func(cmd *cobra.Command, args []string) {
-		ClearScreen()
-	},
+func createClearCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "clear",
+		Short: "Clears the terminal screen",
+		Run: func(cmd *cobra.Command, args []string) {
+			clearScreen()
+		},
+	}
 }
 
-func ClearScreen() {
+func clearScreen() {
 	var cmd *exec.Cmd
 
 	switch runtime.GOOS {
@@ -32,8 +34,4 @@ func ClearScreen() {
 	if err != nil {
 		fmt.Println("Failed to clear the screen:", err)
 	}
-}
-
-func init() {
-	RootCmd.AddCommand(clearCmd)
 }
