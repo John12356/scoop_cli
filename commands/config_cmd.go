@@ -165,9 +165,9 @@ func getHTTPClient(config Config) (*http.Client, error) {
 		Timeout: 30 * time.Second, // Total request timeout
 		Transport: &http.Transport{
 			DialContext: (&net.Dialer{
-				Timeout:   5 * time.Second, // Connection timeout
+				Timeout:   10 * time.Second, // Connection timeout
 			}).DialContext,
-			TLSHandshakeTimeout:   5 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
 			ResponseHeaderTimeout: 10 * time.Second,
 		},
 	}

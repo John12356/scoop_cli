@@ -83,10 +83,10 @@ func createGetPasswordCmd() *cobra.Command {
 			if accountCategory != "" {
 				categoryValue := strings.ToLower(accountCategory)
 				switch categoryValue {
-				case "work", "personal", "global-personal":
+				case "work", "personal":
 					//if found to be valid value --> continue
 				default:
-					fmt.Println("Error: account-category must be one of: work, personal, global-personal")
+					fmt.Println("Error: Invalid value for --account-category. The value must be either 'work' or 'personal'.")
 					return
 				}
 			}
@@ -127,8 +127,6 @@ func createGetPasswordCmd() *cobra.Command {
 				case "work":
 					query.Set("account_category", "1")
 				case "personal":
-					query.Set("account_category", "2")
-				case "global-personal":
 					query.Set("account_category", "3")
 				}
 			}
@@ -148,7 +146,7 @@ func createGetPasswordCmd() *cobra.Command {
 			req.Header.Add("authtoken", AuthToken)
 			response, err := client.Do(req)
 			if err != nil {
-				fmt.Println("Error calling API:", err)
+				fmt.Println("Error calling APIi:", err)
 				return
 			}
 			defer response.Body.Close()
@@ -204,7 +202,7 @@ func createGetPasswordCmd() *cobra.Command {
 	cmd.Flags().StringP("account-name", "n", "", "Account Name for the API call")
 	cmd.Flags().String("account-type", "", "Account Type for the API call")
 	cmd.Flags().StringP("account-title", "t", "", "Account Title for the API call")
-	cmd.Flags().StringP("account-category", "c", "", "Account Category (work, personal, global-personal)")
+	cmd.Flags().StringP("account-category", "c", "", "Account Category for the API call (work, personal)")
 	cmd.Flags().String("ticket-id", "", "Ticket ID for the request")
 	cmd.Flags().String("reason", "", "Reason for accessing the password")
 	cmd.Flags().String("url", "", "Server URL (if not configured)")
