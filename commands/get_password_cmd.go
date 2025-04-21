@@ -146,7 +146,7 @@ func createGetPasswordCmd() *cobra.Command {
 			req.Header.Add("authtoken", AuthToken)
 			response, err := client.Do(req)
 			if err != nil {
-				fmt.Println("Error calling APIi:", err)
+				fmt.Println("Error calling API:", err)
 				return
 			}
 			defer response.Body.Close()
